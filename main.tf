@@ -11,10 +11,6 @@ terraform {
       source = "integrations/github"
       version = "4.2.0"
     }
-    aws = {
-      version               = ">= 3.0.0"
-      configuration_aliases = [aws.us-east-1]
-    }
   }
 }
 
@@ -47,12 +43,16 @@ provider "github" {
 
 module "aws_static_site" {
   source  = "dvargas92495/static-site/aws"
-  version = "2.3.2"
+  version = "3.0.0"
 
   domain = "thankyou.directory"
   secret = var.secret
   tags = {
       Application = "thankyou-directory"
+  }
+
+  providers = {
+    aws.us-east-1 = aws
   }
 }
 
