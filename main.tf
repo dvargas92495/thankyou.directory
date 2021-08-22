@@ -1,17 +1,21 @@
 terraform {
-backend "remote" {
-  hostname = "app.terraform.io"
-  organization = "VargasArts"
-  workspaces {
-    prefix = "thankyou-directory"
+  backend "remote" {
+    hostname = "app.terraform.io"
+    organization = "VargasArts"
+    workspaces {
+      prefix = "thankyou-directory"
+    }
   }
-}
-required_providers {
-  github = {
-    source = "integrations/github"
-    version = "4.2.0"
+  required_providers {
+    github = {
+      source = "integrations/github"
+      version = "4.2.0"
+    }
+    aws = {
+      version               = ">= 3.0.0"
+      configuration_aliases = [aws.us-east-1]
+    }
   }
-}
 }
 
 variable "aws_access_token" {
@@ -49,10 +53,6 @@ module "aws_static_site" {
   secret = var.secret
   tags = {
       Application = "thankyou-directory"
-  }
-
-  providers = {
-    aws.us-east-1 = aws
   }
 }
 
