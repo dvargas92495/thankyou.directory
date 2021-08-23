@@ -4,7 +4,14 @@ const esbuild = require("esbuild");
 const childProcess = require("child_process");
 const rimraf = require("rimraf");
 
+const readDir = (s) =>
+  fs
+    .readdirSync(s, { withFileTypes: true })
+    .flatMap((f) =>
+      f.isDirectory() ? readDir(path.join(s, f.name)) : [path.join(s, f.name)]
+    );
 const appPath = (p) => path.resolve(fs.realpathSync(process.cwd()), p);
+const promiseRimraf = (s) => new Promise((resolve) => rimraf(s, resolve));
 
 const buildDir = (dir) =>
   esbuild
@@ -14,6 +21,7 @@ const buildDir = (dir) =>
       target: "node12",
       platform: "node",
       outfile: path.join("tmp", "_html.js"),
+      external: ["react", "react-dom"],
     })
     .then(() => fs.mkdirSync("out"))
     .then(() =>
@@ -35,6 +43,7 @@ const buildDir = (dir) =>
                       dir.replace(/^pages/, ""),
                       file.name.replace(/\.tsx/, ".js")
                     ),
+                    external: ["react", "react-dom"],
                   })
                   .then((result) => {
                     if (result.errors.length) {
@@ -71,12 +80,12 @@ const buildDir = (dir) =>
       )
     );
 
-new Promise((resolve) => rimraf("tmp", resolve))
+Promise.all([promiseRimraf("tmp"), promiseRimraf("out")])
   .then(() => {
     fs.mkdirSync("tmp");
     return buildDir("pages");
   })
-  .then(() => new Promise((resolve) => rimraf("tmp", resolve)))
+  .then(() => promiseRimraf("tmp"))
   .then(() => {
     console.log("Finished!");
   });
