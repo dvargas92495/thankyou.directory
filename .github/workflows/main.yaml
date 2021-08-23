@@ -6,7 +6,7 @@ on:
       - "package.json"
       - "src/**"
       - "pages/**"
-      - ".github/workflows/lambda.yaml"
+      - ".github/workflows/main.yaml"
 
 env:
   API_URL: api.thankyou.directory
