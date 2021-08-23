@@ -8,12 +8,11 @@ const readDir = (s) =>
 
 const s3 = new AWS.S3({
   apiVersion: "2006-03-01",
-  credentials,
 });
 const cloudfront = new AWS.CloudFront({
   apiVersion: "2020-05-31",
-  credentials,
 });
+
 const waitForCloudfront = (props) =>
   new Promise() <
   string >
