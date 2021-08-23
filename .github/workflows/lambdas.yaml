@@ -23,5 +23,5 @@ deploy:
       run: npm install
     - name: build
       run: npm run build:api
-    - name: publish
-      run: npm run publish:api
+    - name: deploy
+      run: npm run deploy:api
