@@ -43,7 +43,7 @@ provider "github" {
 
 module "aws_static_site" {
   source  = "dvargas92495/static-site/aws"
-  version = "3.0.7"
+  version = "3.0.8"
 
   domain = "thankyou.directory"
   secret = var.secret
@@ -58,12 +58,11 @@ module "aws_static_site" {
 
 module "aws-serverless-backend" {
     source  = "dvargas92495/serverless-backend/aws"
-    version = "1.5.12"
+    version = "1.5.13"
 
     api_name = "thankyou-directory"
     domain = "thankyou.directory"
-    paths = [
-    ]
+    paths = []
 
     tags = {
         Application = "thankyou-directory"
