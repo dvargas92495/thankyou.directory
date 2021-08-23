@@ -22,7 +22,7 @@ const waitForCloudfront = (props) =>
     cloudfront
       .getInvalidation(args)
       .promise()
-      .then((r) => r.Invalidation?.Status)
+      .then((r) => r.Invalidation.Status)
       .then((status) => {
         if (status === "Completed") {
           resolve("Done!");
@@ -37,7 +37,6 @@ const waitForCloudfront = (props) =>
       });
   });
 
-const today = new Date();
 return Promise.all(
   readDir("out").map((p) => {
     const fileName = p.substring(sourcePath.length);
@@ -70,7 +69,7 @@ return Promise.all(
       })
       .promise()
       .then((i) => ({
-        Id: i.Invalidation?.Id || "",
+        Id: i.Invalidation.Id,
         DistributionId: r.data.distributionId,
       }))
   )
