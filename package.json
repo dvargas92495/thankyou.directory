@@ -7,7 +7,8 @@
     "format": "prettier --write \"**/*.tsx\"",
     "lint": "eslint . --ext .ts,.tsx",
     "api": "localhost-lambdas",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "deploy": "node scripts/deploy.js"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.83",
