@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const path = require("path");
+const mimes = require("mime-types");
 
 const readDir = (s) =>
   fs
