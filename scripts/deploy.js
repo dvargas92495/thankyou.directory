@@ -1,4 +1,6 @@
 const AWS = require("aws-sdk");
+const fs = require("fs");
+
 const readDir = (s) =>
   fs
     .readdirSync(s, { withFileTypes: true })
@@ -36,7 +38,7 @@ const waitForCloudfront = (props) =>
       });
   });
 
-return Promise.all(
+Promise.all(
   readDir("out").map((p) => {
     const fileName = p.substring(sourcePath.length);
     const Key = `${destPath}${fileName}`;
@@ -73,5 +75,5 @@ return Promise.all(
       }))
   )
   .then(waitForCloudfront)
-  .then((msg) => info(msg))
+  .then((msg) => console.log(msg))
   .then(() => 0);
