@@ -10,11 +10,18 @@ const readDir = (s) =>
       f.isDirectory() ? readDir(path.join(s, f.name)) : [path.join(s, f.name)]
     );
 
+const credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+};
+
 const s3 = new AWS.S3({
   apiVersion: "2006-03-01",
+  credentials,
 });
 const cloudfront = new AWS.CloudFront({
   apiVersion: "2020-05-31",
+  credentials,
 });
 
 const waitForCloudfront = (props) =>
