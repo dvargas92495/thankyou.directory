@@ -17,6 +17,24 @@ const cloudfront = new AWS.CloudFront({
   apiVersion: "2020-05-31",
 });
 
+const getDistributionIdByDomain = async (domain) => {
+  let finished = false;
+  let Marker = undefined;
+  while (!finished) {
+    const {
+      DistributionList: { IsTruncated, NextMarker, Items },
+    } = await cloudfront.listDistributions({ Marker }).promise();
+    const distribution = Items.find((i) => i.Aliases.Items.includes(domain));
+    if (distribution) {
+      return distribution.Id;
+    }
+    finished = !IsTruncated;
+    Marker = NextMarker;
+  }
+
+  return null;
+};
+
 const waitForCloudfront = (props) =>
   new Promise() <
   string >
@@ -57,10 +75,11 @@ Promise.all(
       .promise();
   })
 )
-  .then(() =>
+  .then(() => getDistributionIdByDomain("thankyou.directory"))
+  .then((DistributionId) =>
     cloudfront
       .createInvalidation({
-        DistributionId: r.data.distributionId,
+        DistributionId,
         InvalidationBatch: {
           CallerReference: today.toJSON(),
           Paths: {
@@ -72,9 +91,13 @@ Promise.all(
       .promise()
       .then((i) => ({
         Id: i.Invalidation.Id,
-        DistributionId: r.data.distributionId,
+        DistributionId,
       }))
   )
   .then(waitForCloudfront)
   .then((msg) => console.log(msg))
-  .then(() => 0);
+  .then(() => 0)
+  .catch((e) => {
+    console.error(e.message);
+    process.exit(1);
+  });
