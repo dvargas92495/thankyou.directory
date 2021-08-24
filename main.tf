@@ -69,19 +69,14 @@ module "aws-serverless-backend" {
     }
 }
 
-provider "github" {
-  owner = "dvargas92495"
-  token = var.github_token
-}
-
 resource "github_actions_secret" "deploy_aws_access_key" {
-  repository       = "roam-js-extensions"
+  repository       = "thankyou.directory"
   secret_name      = "DEPLOY_AWS_ACCESS_KEY"
   plaintext_value  = module.aws_static_site.deploy-id
 }
 
 resource "github_actions_secret" "deploy_aws_access_secret" {
-  repository       = "roam-js-extensions"
+  repository       = "thankyou.directory"
   secret_name      = "DEPLOY_AWS_ACCESS_SECRET"
   plaintext_value  = module.aws_static_site.deploy-secret
 }
