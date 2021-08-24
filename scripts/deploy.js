@@ -41,11 +41,10 @@ const waitForCloudfront = (props) =>
 
 Promise.all(
   readDir("out").map((p) => {
-    const fileName = p.substring(sourcePath.length);
-    const Key = `${destPath}${fileName}`;
+    const Key = p.substring("out/".length);
     const uploadProps = {
       Bucket: "thankyou.directory",
-      ContentType: mime.lookup(fileName) || undefined,
+      ContentType: mime.lookup(Key) || undefined,
     };
     console.log(`Uploading ${p} to ${Key}...`);
     return s3
