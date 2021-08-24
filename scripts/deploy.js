@@ -81,7 +81,7 @@ Promise.all(
       .createInvalidation({
         DistributionId,
         InvalidationBatch: {
-          CallerReference: today.toJSON(),
+          CallerReference: new Date().toJSON(),
           Paths: {
             Quantity: 1,
             Items: [`/*`],

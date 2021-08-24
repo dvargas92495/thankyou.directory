@@ -7,7 +7,9 @@ const Home: React.FunctionComponent = () => (
       A database of people who have supported others and a suite of tools to
       thank them!
     </h3>
-    <button style={{ padding: 8, borderRadius: 8 }}>Get Started Today!</button>
+    <button style={{ padding: 8, borderRadius: 8, margin: "16px 0" }}>
+      Get Started Today!
+    </button>
   </main>
 );
 
