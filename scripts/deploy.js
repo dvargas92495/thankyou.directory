@@ -35,28 +35,25 @@ const getDistributionIdByDomain = async (domain) => {
   return null;
 };
 
-const waitForCloudfront = (props) =>
-  new Promise() <
-  string >
-  ((resolve) => {
-    const { trial = 0, ...args } = props;
-    cloudfront
-      .getInvalidation(args)
-      .promise()
-      .then((r) => r.Invalidation.Status)
-      .then((status) => {
-        if (status === "Completed") {
-          resolve("Done!");
-        } else if (trial === 60) {
-          resolve("Ran out of time waiting for cloudfront...");
-        } else {
-          setTimeout(
-            () => waitForCloudfront({ ...args, trial: trial + 1 }),
-            1000
-          );
-        }
-      });
-  });
+const waitForCloudfront = (props) => {
+  const { trial = 0, resolve, ...args } = props;
+  cloudfront
+    .getInvalidation(args)
+    .promise()
+    .then((r) => r.Invalidation.Status)
+    .then((status) => {
+      if (status === "Completed") {
+        resolve("Done!");
+      } else if (trial === 60) {
+        resolve("Ran out of time waiting for cloudfront...");
+      } else {
+        setTimeout(
+          () => waitForCloudfront({ ...args, trial: trial + 1, resolve }),
+          1000
+        );
+      }
+    });
+};
 
 Promise.all(
   readDir("out").map((p) => {
@@ -94,7 +91,10 @@ Promise.all(
         DistributionId,
       }))
   )
-  .then(waitForCloudfront)
+  .then(
+    (props) =>
+      new Promise((resolve) => waitForCloudfront({ ...props, resolve }))
+  )
   .then((msg) => console.log(msg))
   .then(() => 0)
   .catch((e) => {
