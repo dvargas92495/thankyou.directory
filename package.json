@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "api": "localhost-lambdas",
     "build": "fuego build",
-    "deploy": "node a.js"
+    "deploy": "fuego deploy"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.83",
@@ -18,7 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
-    "fuegojs": "^0.2.16",
+    "fuegojs": "0.2.16",
     "localhost-lambdas": "^0.2.14",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
