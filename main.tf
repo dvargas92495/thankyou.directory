@@ -30,6 +30,10 @@ variable "secret" {
   type = string
 }
 
+variable "mysql_password" {
+  type = string
+}
+
 provider "aws" {
   region = "us-east-1"
   access_key = var.aws_access_token
@@ -79,4 +83,10 @@ resource "github_actions_secret" "deploy_aws_access_secret" {
   repository       = "thankyou.directory"
   secret_name      = "DEPLOY_AWS_ACCESS_SECRET"
   plaintext_value  = module.aws_static_site.deploy-secret
+}
+
+resource "github_actions_secret" "mysql_password" {
+  repository       = "thankyou.directory"
+  secret_name      = "MYSQL_PASSWORD"
+  plaintext_value  = var.mysql_password
 }
