@@ -7,10 +7,7 @@ on:
       - ".github/workflows/db.yaml"
 
 env:
-  AWS_ACCESS_KEY_ID: \${{ secrets.DEPLOY_AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: \${{ secrets.DEPLOY_AWS_ACCESS_SECRET }}
-  AWS_REGION: us-east-1
-  DB_PASSWORD: \${{ secrets.MYSQL_PASSWORD }}
+  DB_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
   DB_USER: thankyou_directory
   DB_NAME: thankyou_directory
   DB_HOST: vargas-arts.c2sjnb5f4d57.us-east-1.rds.amazonaws.com
