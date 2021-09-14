@@ -9,6 +9,7 @@
     "api": "localhost-lambdas",
     "build": "fuego build",
     "deploy": "fuego deploy",
+    "fe": "fuego fe",
     "migrate": "fuego migrate"
   },
   "devDependencies": {
@@ -19,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
-    "fuegojs": "^0.3.2",
+    "fuegojs": "^0.4.13",
     "localhost-lambdas": "^0.2.14",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
