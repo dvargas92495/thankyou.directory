@@ -34,6 +34,14 @@ variable "mysql_password" {
   type = string
 }
 
+variable "clerk_api_key" {
+    type = string
+}
+
+variable "clerk_dev_api_key" {
+    type = string
+}
+
 provider "aws" {
   region = "us-east-1"
   access_key = var.aws_access_token
@@ -73,6 +81,14 @@ module "aws-serverless-backend" {
     }
 }
 
+module "aws_clerk" {
+  source   = "dvargas92495/clerk/aws"
+  version = "1.0.0"
+
+  zone_id  = module.aws_static_site.route53_zone_id
+  clerk_id = "auitknq6b0p7"
+}
+
 resource "github_actions_secret" "deploy_aws_access_key" {
   repository       = "thankyou.directory"
   secret_name      = "DEPLOY_AWS_ACCESS_KEY"
@@ -89,4 +105,16 @@ resource "github_actions_secret" "mysql_password" {
   repository       = "thankyou.directory"
   secret_name      = "MYSQL_PASSWORD"
   plaintext_value  = var.mysql_password
+}
+
+resource "github_actions_secret" "clerk_api_key" {
+  repository       = "thankyou.directory"
+  secret_name      = "CLERK_API_KEY"
+  plaintext_value  = var.clerk_api_key
+}
+
+resource "github_actions_secret" "clerk_dev_api_key" {
+  repository       = "thankyou.directory"
+  secret_name      = "CLERK_DEV_API_KEY"
+  plaintext_value  = var.clerk_dev_api_key
 }

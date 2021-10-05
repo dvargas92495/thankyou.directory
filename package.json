@@ -29,6 +29,8 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^1.22.0",
+    "@clerk/clerk-sdk-node": "^0.5.2",
     "@dvargas92495/ui": "^0.32.17",
     "aws-sdk": "^2.974.0",
     "mime-types": "^2.1.32",
