@@ -8,40 +8,43 @@ import {
   ServerStyleSheets,
   Root,
 } from "@dvargas92495/ui";
+import { ClerkProvider } from "@clerk/clerk-react";
 
 const sheets = new ServerStyleSheets();
 
 const Layout: React.FC = ({ children }) => {
   return sheets.collect(
-    <ThemeProvider>
-      <Root>
-        <AppBar
-          homeIcon={"TY"}
-          userIcon={
-            <>
-              <Button
-                color={"primary"}
-                href={"/login"}
-                variant={"outlined"}
-                style={{ margin: "0 4px" }}
-              >
-                LOGIN
-              </Button>
-              <Button
-                color={"secondary"}
-                href={"/signup"}
-                variant={"outlined"}
-                style={{ marginLeft: 4, marginRight: 8 }}
-              >
-                SIGNUP
-              </Button>
-            </>
-          }
-        />
-        <Main>{children}</Main>
-        <Footer siteLinks={[]} />
-      </Root>
-    </ThemeProvider>
+    <ClerkProvider frontendApi={process.env.CLERK_FRONTEND_API}>
+      <ThemeProvider>
+        <Root>
+          <AppBar
+            homeIcon={"TY"}
+            userIcon={
+              <>
+                <Button
+                  color={"primary"}
+                  href={"/login"}
+                  variant={"outlined"}
+                  style={{ margin: "0 4px" }}
+                >
+                  LOGIN
+                </Button>
+                <Button
+                  color={"secondary"}
+                  href={"/signup"}
+                  variant={"outlined"}
+                  style={{ marginLeft: 4, marginRight: 8 }}
+                >
+                  SIGNUP
+                </Button>
+              </>
+            }
+          />
+          <Main>{children}</Main>
+          <Footer siteLinks={[]} />
+        </Root>
+      </ThemeProvider>
+    </ClerkProvider>
   );
 };
 

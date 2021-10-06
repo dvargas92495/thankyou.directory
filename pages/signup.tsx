@@ -1,9 +1,10 @@
 import React from "react";
 import Layout, { LayoutHead } from "../src/Layout";
+import { SignUp } from "@clerk/clerk-react";
 
 const Signup: React.FunctionComponent = () => (
   <Layout>
-    <div>Signup</div>
+    <SignUp />
   </Layout>
 );
 
