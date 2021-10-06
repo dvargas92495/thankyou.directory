@@ -79,7 +79,7 @@ module "aws-serverless-backend" {
 
 module "aws_clerk" {
   source   = "dvargas92495/clerk/aws"
-  version = "1.0.0"
+  version = "1.0.1"
 
   zone_id  = module.aws_static_site.route53_zone_id
   clerk_id = "auitknq6b0p7"
