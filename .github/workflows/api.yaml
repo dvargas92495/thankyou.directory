@@ -1,10 +1,10 @@
-name: Publish Lambda
+name: Publish API
 on:
-push:
-  branches: main
-  paths:
-    - "functions/*"
-    - ".github/workflows/api.yaml"
+  push:
+    branches: main
+    paths:
+      - "functions/*"
+      - ".github/workflows/api.yaml"
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOY_AWS_ACCESS_KEY }}
