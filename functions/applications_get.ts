@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { v4 } from "uuid";
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const handler: APIGatewayProxyHandler = async () => {
   return {
     statusCode: 200,
     body: JSON.stringify({
@@ -11,7 +11,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
           name: "RoamJS",
         },
       ],
-      request: event.queryStringParameters,
     }),
     headers: {
       "Access-Control-Allow-Origin": "*",
