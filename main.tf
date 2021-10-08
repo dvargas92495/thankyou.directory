@@ -66,7 +66,7 @@ module "aws_static_site" {
 
 module "aws-serverless-backend" {
     source  = "dvargas92495/serverless-backend/aws"
-    version = "1.5.14"
+    version = "1.5.15"
 
     api_name = "thankyou-directory"
     domain = "thankyou.directory"
