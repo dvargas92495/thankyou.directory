@@ -3,8 +3,8 @@ on:
 push:
   branches: main
   paths:
-    - "lambdas/*"
-    - ".github/workflows/lambda.yaml"
+    - "functions/*"
+    - ".github/workflows/api.yaml"
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOY_AWS_ACCESS_KEY }}
@@ -25,6 +25,6 @@ deploy:
     - name: install
       run: npm install
     - name: build
-      run: npm run build:api
+      run: npm run compile
     - name: deploy
-      run: npm run deploy:api
+      run: npm run publish
