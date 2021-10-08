@@ -8,7 +8,12 @@ import {
   ServerStyleSheets,
   Root,
 } from "@dvargas92495/ui";
-import { ClerkProvider } from "@clerk/clerk-react";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const sheets = new ServerStyleSheets();
 
@@ -21,22 +26,27 @@ const Layout: React.FC = ({ children }) => {
             homeIcon={"TY"}
             userIcon={
               <>
-                <Button
-                  color={"primary"}
-                  href={"/login"}
-                  variant={"outlined"}
-                  style={{ margin: "0 4px" }}
-                >
-                  LOGIN
-                </Button>
-                <Button
-                  color={"secondary"}
-                  href={"/signup"}
-                  variant={"outlined"}
-                  style={{ marginLeft: 4, marginRight: 8 }}
-                >
-                  SIGNUP
-                </Button>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <Button
+                    color={"primary"}
+                    href={"/login"}
+                    variant={"outlined"}
+                    style={{ margin: "0 4px" }}
+                  >
+                    LOGIN
+                  </Button>
+                  <Button
+                    color={"secondary"}
+                    href={"/signup"}
+                    variant={"outlined"}
+                    style={{ marginLeft: 4, marginRight: 8 }}
+                  >
+                    SIGNUP
+                  </Button>
+                </SignedOut>
               </>
             }
           />

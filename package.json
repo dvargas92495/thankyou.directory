@@ -6,11 +6,13 @@
   "scripts": {
     "format": "prettier --write \"**/*.tsx\"",
     "lint": "eslint . --ext .ts,.tsx",
-    "api": "localhost-lambdas",
+    "api": "fuego api",
     "build": "fuego build",
+    "compile": "fuego compile",
     "deploy": "fuego deploy",
     "fe": "fuego fe",
-    "migrate": "fuego migrate"
+    "migrate": "fuego migrate",
+    "publish": "fuego publish"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.83",
@@ -20,8 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
-    "fuegojs": "^0.4.18",
-    "localhost-lambdas": "^0.2.14",
+    "fuegojs": "^0.5.7",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "tslint-config-prettier": "^1.18.0",
@@ -33,6 +34,7 @@
     "@clerk/clerk-sdk-node": "^0.5.2",
     "@dvargas92495/ui": "^0.32.18",
     "aws-sdk": "^2.974.0",
+    "axios": "^0.22.0",
     "mime-types": "^2.1.32",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

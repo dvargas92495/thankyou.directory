@@ -4,3 +4,8 @@ export type Sponsors = {
   url: string;
   image: string;
 };
+
+export type Applications = {
+  uuid: string;
+  name: string;
+}
