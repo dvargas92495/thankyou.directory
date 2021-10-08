@@ -99,6 +99,18 @@ resource "github_actions_secret" "deploy_aws_access_secret" {
   plaintext_value  = module.aws_static_site.deploy-secret
 }
 
+resource "github_actions_secret" "lambda_aws_access_key" {
+  repository       = "thankyou.directory"
+  secret_name      = "LAMBDA_AWS_ACCESS_KEY"
+  plaintext_value  = module.aws-serverless-backend.access_key
+}
+
+resource "github_actions_secret" "lambda_aws_access_secret" {
+  repository       = "thankyou.directory"
+  secret_name      = "LAMBDA_AWS_ACCESS_SECRET"
+  plaintext_value  = module.aws-serverless-backend.secret_key
+}
+
 resource "github_actions_secret" "mysql_password" {
   repository       = "thankyou.directory"
   secret_name      = "MYSQL_PASSWORD"
