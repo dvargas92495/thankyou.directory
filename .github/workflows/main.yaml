@@ -9,7 +9,7 @@ on:
       - ".github/workflows/main.yaml"
 
 env:
-  API_URL: api.thankyou.directory
+  API_URL: https://api.thankyou.directory
   AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOY_AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOY_AWS_ACCESS_SECRET }}
   AWS_REGION: us-east-1
