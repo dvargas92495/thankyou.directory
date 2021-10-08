@@ -4,6 +4,8 @@ on:
     branches: main
     paths:
       - "functions/*"
+      - "src/**"
+      - "package.json"
       - ".github/workflows/api.yaml"
 
 env:
