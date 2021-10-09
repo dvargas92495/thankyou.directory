@@ -1,11 +1,11 @@
-export type Sponsors = {
+export type Sponsor = {
   uuid: string;
   name: string;
   url: string;
   image: string;
 };
 
-export type Applications = {
+export type Application = {
   uuid: string;
   name: string;
 }

@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 
 const Redirect = () => {
   useEffect(() => {
-    window.history.pushState({ url: "/login" }, "");
-  });
+    window.location.assign("/login");
+  }, []);
   return (
     <div>
       <Loading loading />
