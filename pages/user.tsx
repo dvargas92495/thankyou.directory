@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "../src/Layout";
+import RedirectToLogin from "../src/RedirectToLogin";
 import type { Applications } from "../db/schema";
 import { SignedIn, UserProfile } from "@clerk/clerk-react";
 
@@ -24,9 +25,28 @@ const UserPage: React.FunctionComponent = () => (
     <SignedIn>
       <UserProfile />
     </SignedIn>
+    <RedirectToLogin />
     <ApplicationsView />
   </Layout>
 );
 
-export const Head = (): React.ReactElement => <LayoutHead title={"User"} />;
+export const Head = (): React.ReactElement => (
+  <LayoutHead
+    title={"User"}
+    styles={`div.cl-component.cl-user-profile .cl-main+.cl-powered-by-clerk {
+  position: absolute;
+}
+
+div.cl-component.cl-user-profile {
+  background-color: unset;
+  height: fit-content !important;
+  position: relative;
+}
+
+div.cl-component.cl-user-profile div.cl-content {
+  margin-left: 24px;
+  margin-right: 24px;
+}`}
+  />
+);
 export default UserPage;

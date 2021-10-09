@@ -62,10 +62,12 @@ export const LayoutHead = ({
   title = "ThankYou Directory",
   description = title,
   img,
+  styles,
 }: {
   title?: string;
   description?: string;
   img?: string;
+  styles?: string;
 }): React.ReactElement => {
   return (
     <>
@@ -83,6 +85,7 @@ export const LayoutHead = ({
       <meta name="og:image" content={img} />
       <meta name="twitter:image" content={img} />
       {sheets.getStyleElement()}
+      {styles && <style>{styles}</style>}
     </>
   );
 };
