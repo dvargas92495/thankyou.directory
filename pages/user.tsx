@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "../src/Layout";
 import RedirectToLogin from "../src/RedirectToLogin";
-import type { Application } from "../db/schema";
+import type { Handler } from "../functions/applications_get";
 import { SignedIn, UserProfile } from "@clerk/clerk-react";
 
+type Applications = ReturnType<Handler>["applications"];
+
 const ApplicationsView = () => {
-  const [apps, setApps] = useState<Application[]>([]);
+  const [apps, setApps] = useState<Applications>([]);
   useEffect(() => {
     fetch(`${process.env.API_URL}/applications`)
       .then((r) => (r.ok ? r.json() : { applications: [] }))
