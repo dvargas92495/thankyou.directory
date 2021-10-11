@@ -71,7 +71,10 @@ module "aws-serverless-backend" {
     api_name = "thankyou-directory"
     domain = "thankyou.directory"
     paths = [
-      "applications/get"
+      "applications/delete",
+      "applications/get",
+      "applications/post",
+      "applications/put"
     ]
 
     tags = {
