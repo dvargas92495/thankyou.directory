@@ -1,13 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { EntitySchema } from "typeorm";
 
-@Entity({ name: "applications" })
-export default class Application {
-  @PrimaryGeneratedColumn("uuid")
+type Application = {
   uuid: string;
-
-  @Column()
   name: string;
-
-  @Column()
   user_id: string;
-}
+};
+
+export default new EntitySchema<Application>({
+  name: "applications",
+  columns: {
+    uuid: {
+      type: "uuid",
+      primary: true,
+      generated: true,
+    },
+    name: {
+      type: "varchar",
+    },
+    user_id: {
+      type: "varchar",
+    },
+  },
+});

@@ -1,16 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { EntitySchema } from "typeorm";
 
-@Entity({ name: "sponsors" })
-export class Sponsor {
-  @PrimaryGeneratedColumn("uuid")
-  uuid: string;
-
-  @Column()
-  name: string;
-
-  @Column()
-  url: string;
-
-  @Column()
-  image: string;
-}
+export default new EntitySchema({
+  name: "sponsors",
+  columns: {
+    uuid: {
+      type: "uuid",
+      generated: true,
+      primary: true,
+    },
+    name: {
+      type: "varchar",
+    },
+    url: {
+      type: "varchar",
+    },
+    image: {
+      type: "varchar",
+    },
+  },
+});
