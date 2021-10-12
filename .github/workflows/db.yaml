@@ -7,11 +7,17 @@ on:
       - ".github/workflows/db.yaml"
 
 env:
-  DB_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-  DB_USER: thankyou_directory
-  DB_NAME: thankyou_directory
-  DB_HOST: vargas-arts.c2sjnb5f4d57.us-east-1.rds.amazonaws.com
-  DB_PORT: 5432
+  TYPEORM_CONNECTION: mysql
+  TYPEORM_HOST: vargas-arts.c2sjnb5f4d57.us-east-1.rds.amazonaws.com
+  TYPEORM_USERNAME: thankyou_directory
+  TYPEORM_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  TYPEORM_DATABASE: thankyou_directory
+  TYPEORM_PORT: 5432
+  TYPEORM_SYNCHRONIZE: false
+  TYPEORM_LOGGING: true
+  TYPEORM_ENTITIES: db/*.ts
+  TYPEORM_MIGRATIONS: db/migrations/*.ts
+  TYPEORM_MIGRATIONS_DIR: db/migrations
 
 jobs:
   deploy:
