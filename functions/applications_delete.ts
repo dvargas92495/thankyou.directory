@@ -2,9 +2,9 @@ import createAPIGatewayProxyHandler from "aws-sdk-plus/dist/createAPIGatewayProx
 import { getRepository } from "typeorm";
 import Application from "../db/application";
 
-const logic = () =>
+const logic = ({ uuid }: Pick<Application, "uuid">) =>
   getRepository(Application)
-    .find()
+    .delete({ uuid })
     .then((applications) => ({
       applications,
     }));
