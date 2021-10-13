@@ -12,7 +12,7 @@ export default new EntitySchema<Application>({
     uuid: {
       type: "uuid",
       primary: true,
-      generated: true,
+      generated: 'uuid',
     },
     name: {
       type: "varchar",

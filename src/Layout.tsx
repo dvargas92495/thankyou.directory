@@ -19,7 +19,7 @@ const sheets = new ServerStyleSheets();
 
 const Layout: React.FC = ({ children }) => {
   return sheets.collect(
-    <ClerkProvider frontendApi={process.env.CLERK_FRONTEND_API}>
+    <ClerkProvider frontendApi={process.env.CLERK_FRONTEND_API} authVersion={2}>
       <ThemeProvider>
         <Root>
           <AppBar

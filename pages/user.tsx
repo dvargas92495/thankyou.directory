@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "../src/Layout";
 import RedirectToLogin from "../src/RedirectToLogin";
 import type { Handler } from "../functions/applications_get";
-import { SignedIn, UserProfile } from "@clerk/clerk-react";
+import type { Handler as PostHandler } from "../functions/applications_post";
+import { SignedIn, UserProfile, useSession } from "@clerk/clerk-react";
 import ReactDOM from "react-dom";
+import { Button, StringField } from "@dvargas92495/ui";
 
 type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
   ? R
@@ -11,19 +13,31 @@ type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
 
 type Applications = InnerPromise<ReturnType<Handler>>["applications"];
 
-const ApplicationsView = () => {
-  const [apps, setApps] = useState<Applications>([]);
-  useEffect(() => {
-    fetch(`${process.env.API_URL}/applications`)
+const NewApplication = () => {
+  const { getToken, id } = useSession();
+  const [name, setName] = useState("");
+  const onClick = () => {
+    getToken()
+      .then((token) =>
+        fetch(`${process.env.API_URL}/applications?_clerk_session_id=${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({ name }),
+        })
+      )
       .then((r) => (r.ok ? r.json() : { applications: [] }))
-      .then((r) => setApps(r.applications));
-  }, []);
+      .then((r) => console.log(r));
+  };
   return (
-    <ul>
-      {apps.map((a) => (
-        <li key={a.uuid}>{a.name}</li>
-      ))}
-    </ul>
+    <>
+      <StringField value={name} setValue={setName} name={"Name"} />
+      <Button color={"primary"} disabled={!name} onClick={onClick}>
+        Create
+      </Button>
+    </>
   );
 };
 
@@ -134,9 +148,9 @@ const UserPage: React.FunctionComponent = () => (
         id={"applications"}
         cards={[
           {
-            title: "Apps",
-            description: "Manage apps",
-            Component: ApplicationsView,
+            title: "Create",
+            description: "Add a new application",
+            Component: NewApplication,
           },
         ]}
       />
