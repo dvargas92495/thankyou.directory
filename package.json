@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^1.22.0",
-    "@clerk/clerk-sdk-node": "^0.6.1",
+    "@dvargas92495/api": "^0.1.1",
     "@dvargas92495/ui": "^0.32.18",
     "aws-sdk-plus": "^0.2.1",
     "axios": "^0.22.0",

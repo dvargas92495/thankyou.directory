@@ -11,9 +11,17 @@ type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
   ? R
   : unknown;
 
-type Applications = InnerPromise<ReturnType<Handler>>["applications"];
+type GetResponse = ReturnType<Handler>;
+type Applications = InnerPromise<GetResponse>["applications"];
+type Application = Omit<Applications[number], "user_id">;
 
-const NewApplication = () => {
+type PostResponse = ReturnType<PostHandler>;
+
+const NewApplication = ({
+  onSuccess,
+}: {
+  onSuccess: (item: Application) => void;
+}) => {
   const { getToken, id } = useSession();
   const [name, setName] = useState("");
   const onClick = () => {
@@ -28,12 +36,17 @@ const NewApplication = () => {
           body: JSON.stringify({ name }),
         })
       )
-      .then((r) => (r.ok ? r.json() : { applications: [] }))
-      .then((r) => console.log(r));
+      .then((r) => (r.ok ? r.json() : { uuid: "" }) as PostResponse)
+      .then((r) => onSuccess({ name, uuid: r.uuid }));
   };
   return (
     <>
-      <StringField value={name} setValue={setName} name={"Name"} />
+      <StringField
+        value={name}
+        setValue={setName}
+        name={"Name"}
+        label={"Name"}
+      />
       <Button color={"primary"} disabled={!name} onClick={onClick}>
         Create
       </Button>
@@ -79,8 +92,8 @@ const UserProfileTab = ({
         </a>,
         document.querySelector("nav.cl-navbar") || document.body
       )}
-      {ReactDOM.createPortal(
-        <div className="cl-content">
+      {active && ReactDOM.createPortal(
+        <>
           <div className="cl-page-heading">
             <div className="cl-text-container">
               <h2 className="cl-title">{title}</h2>
@@ -101,11 +114,18 @@ const UserProfileTab = ({
               {c.items && (
                 <div className="cl-titled-card-list">
                   {c.items.map((i) => (
-                    <button className="cl-list-item" key={i.title}>
-                      <div>{i.title}</div>
-                      <div>
+                    <button
+                      className="cl-list-item _1qJoyBQenGMr7kHEjL4Krl _2YW23wFdhOB4SEGzozPtqO qlMNWy3GFjlnVDhYmD_84"
+                      key={i.title}
+                    >
+                      <div className={"_3cdHQF85GQrVzNyaksJFAn"}>{i.title}</div>
+                      <div
+                        className={
+                          "_377YaX0RVdJAflWkqyk0_W _5doIP53SFIp-tF1LX17if"
+                        }
+                      >
                         <div>
-                          <span className="cl-font-semibold">{i.display}</span>
+                          <span className="cl-font-semibold ">{i.display}</span>
                         </div>
                         <div>
                           <svg
@@ -128,11 +148,15 @@ const UserProfileTab = ({
                   ))}
                 </div>
               )}
-              {c.Component && <c.Component />}
+              {c.Component && (
+                <div style={{ padding: "24px 32px" }}>
+                  <c.Component />
+                </div>
+              )}
             </div>
           ))}
-        </div>,
-        document.querySelector("div.cl-main") || document.body
+        </>,
+        document.querySelector("div.cl-content") || document.body
       )}
     </>
   ) : (
@@ -140,20 +164,66 @@ const UserProfileTab = ({
   );
 };
 
+const ApplicationsTab = () => {
+  const { getToken, id } = useSession();
+  const [items, setItems] = useState<Application[]>([]);
+  useEffect(() => {
+    getToken()
+      .then((token) =>
+        fetch(`${process.env.API_URL}/applications?_clerk_session_id=${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      )
+      .then((r) => (r.ok ? r.json() : { applications: [] }) as GetResponse)
+      .then((r) => setItems(r.applications));
+  }, [getToken, id, setItems]);
+  return (
+    <UserProfileTab
+      id={"applications"}
+      icon={
+        <svg
+          width="1.25em"
+          height="1.25em"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          fill="none"
+          className="cl-icon"
+        >
+          <g id="application">
+            <g>
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M3.5,9h9C12.78,9,13,8.78,13,8.5C13,8.22,12.78,8,12.5,8h-9C3.22,8,3,8.22,3,8.5
+			C3,8.78,3.22,9,3.5,9z M3.5,11h5C8.78,11,9,10.78,9,10.5C9,10.22,8.78,10,8.5,10h-5C3.22,10,3,10.22,3,10.5
+			C3,10.78,3.22,11,3.5,11z M19,1H1C0.45,1,0,1.45,0,2v16c0,0.55,0.45,1,1,1h18c0.55,0,1-0.45,1-1V2C20,1.45,19.55,1,19,1z M18,17H2
+			V6h16V17z M3.5,13h7c0.28,0,0.5-0.22,0.5-0.5c0-0.28-0.22-0.5-0.5-0.5h-7C3.22,12,3,12.22,3,12.5C3,12.78,3.22,13,3.5,13z"
+              />
+            </g>
+          </g>
+        </svg>
+      }
+      cards={[
+        {
+          title: "Create",
+          description: "Add a new application",
+          Component: () => (
+            <NewApplication onSuccess={(item) => setItems([...items, item])} />
+          ),
+          items: items.map(({ name }) => ({ title: "Name", display: name })),
+        },
+      ]}
+    />
+  );
+};
+
 const UserPage: React.FunctionComponent = () => (
   <Layout>
     <SignedIn>
       <UserProfile />
-      <UserProfileTab
-        id={"applications"}
-        cards={[
-          {
-            title: "Create",
-            description: "Add a new application",
-            Component: NewApplication,
-          },
-        ]}
-      />
+      <ApplicationsTab />
     </SignedIn>
     <RedirectToLogin />
   </Layout>

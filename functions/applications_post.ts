@@ -1,7 +1,8 @@
 import createAPIGatewayProxyHandler from "aws-sdk-plus/dist/createAPIGatewayProxyHandler";
+import clerkAuthenticateLambda from "@dvargas92495/api/dist/clerkAuthenticateLambda";
 import { getRepository } from "typeorm";
 import Application from "../db/application";
-import { connect, authenticate } from "./common";
+import { connect } from "./common";
 
 const logic = ({
   name,
@@ -16,5 +17,5 @@ const logic = ({
       uuid: result.identifiers[0].uuid as string,
     }));
 
-export const handler = authenticate(createAPIGatewayProxyHandler(logic));
+export const handler = clerkAuthenticateLambda(createAPIGatewayProxyHandler(logic));
 export type Handler = typeof logic;
