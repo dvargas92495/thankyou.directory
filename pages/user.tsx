@@ -3,9 +3,18 @@ import Layout, { LayoutHead } from "../src/Layout";
 import RedirectToLogin from "../src/RedirectToLogin";
 import type { Handler } from "../functions/applications_get";
 import type { Handler as PostHandler } from "../functions/applications_post";
+import type { Handler as DeleteHandler } from "../functions/applications_delete";
+import type { Handler as PutHandler } from "../functions/applications_put";
 import { SignedIn, UserProfile, useSession } from "@clerk/clerk-react";
 import ReactDOM from "react-dom";
-import { Button, StringField } from "@dvargas92495/ui";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  StringField,
+} from "@dvargas92495/ui";
 
 type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
   ? R
@@ -17,17 +26,21 @@ type Application = Omit<Applications[number], "user_id">;
 
 type PostResponse = ReturnType<PostHandler>;
 
+type DeleteResponse = ReturnType<DeleteHandler>;
+
+type PutResponse = ReturnType<PutHandler>;
+
 const NewApplication = ({
   onSuccess,
 }: {
   onSuccess: (item: Application) => void;
 }) => {
-  const { getToken, id } = useSession();
+  const { getToken } = useSession();
   const [name, setName] = useState("");
   const onClick = () => {
     getToken()
       .then((token) =>
-        fetch(`${process.env.API_URL}/applications?_clerk_session_id=${id}`, {
+        fetch(`${process.env.API_URL}/applications`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -54,6 +67,8 @@ const NewApplication = ({
   );
 };
 
+type ClerkItem = { title: string; display: string; id: string };
+
 const UserProfileTab = ({
   id,
   subtitle = `Manage ${id}`,
@@ -66,8 +81,9 @@ const UserProfileTab = ({
   cards?: {
     title: string;
     description: string;
-    items?: { title: string; display: string }[];
+    items?: ClerkItem[];
     Component?: React.FC;
+    onItemClick?: (e: React.MouseEvent, item: ClerkItem) => void;
   }[];
 }) => {
   const [mounted, setMounted] = useState(false);
@@ -92,72 +108,78 @@ const UserProfileTab = ({
         </a>,
         document.querySelector("nav.cl-navbar") || document.body
       )}
-      {active && ReactDOM.createPortal(
-        <>
-          <div className="cl-page-heading">
-            <div className="cl-text-container">
-              <h2 className="cl-title">{title}</h2>
-              <p className="cl-subtitle">{subtitle}</p>
-            </div>
-          </div>
-          {cards.map((c) => (
-            <div
-              className={
-                "wKjtxHPVelSpGxgKD4J-K _1OzNYgdyNED3jLWN6DXv1T cl-themed-card"
-              }
-              key={c.title}
-            >
-              <div>
-                <h1>{c.title}</h1>
-                <p>{c.description}</p>
+      {active &&
+        ReactDOM.createPortal(
+          <>
+            <div className="cl-page-heading">
+              <div className="cl-text-container">
+                <h2 className="cl-title">{title}</h2>
+                <p className="cl-subtitle">{subtitle}</p>
               </div>
-              {c.items && (
-                <div className="cl-titled-card-list">
-                  {c.items.map((i) => (
-                    <button
-                      className="cl-list-item _1qJoyBQenGMr7kHEjL4Krl _2YW23wFdhOB4SEGzozPtqO qlMNWy3GFjlnVDhYmD_84"
-                      key={i.title}
-                    >
-                      <div className={"_3cdHQF85GQrVzNyaksJFAn"}>{i.title}</div>
-                      <div
-                        className={
-                          "_377YaX0RVdJAflWkqyk0_W _5doIP53SFIp-tF1LX17if"
-                        }
-                      >
-                        <div>
-                          <span className="cl-font-semibold ">{i.display}</span>
-                        </div>
-                        <div>
-                          <svg
-                            width="1.25em"
-                            height="1.25em"
-                            viewBox="0 0 20 20"
-                            stroke="#335BF1"
-                            fill="none"
-                          >
-                            <path
-                              d="M3.333 10h13.332M11.666 5l5 5-5 5"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            ></path>
-                          </svg>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {c.Component && (
-                <div style={{ padding: "24px 32px" }}>
-                  <c.Component />
-                </div>
-              )}
             </div>
-          ))}
-        </>,
-        document.querySelector("div.cl-content") || document.body
-      )}
+            {cards.map((c) => (
+              <div
+                className={
+                  "wKjtxHPVelSpGxgKD4J-K _1OzNYgdyNED3jLWN6DXv1T cl-themed-card"
+                }
+                key={c.title}
+              >
+                <div>
+                  <h1>{c.title}</h1>
+                  <p>{c.description}</p>
+                </div>
+                {c.items && (
+                  <div className="cl-titled-card-list">
+                    {c.items.map((i) => (
+                      <button
+                        className="cl-list-item _1qJoyBQenGMr7kHEjL4Krl _2YW23wFdhOB4SEGzozPtqO qlMNWy3GFjlnVDhYmD_84"
+                        key={i.id}
+                        onClick={(e) => c.onItemClick?.(e, i)}
+                      >
+                        <div className={"_3cdHQF85GQrVzNyaksJFAn"}>
+                          {i.title}
+                        </div>
+                        <div
+                          className={
+                            "_377YaX0RVdJAflWkqyk0_W _5doIP53SFIp-tF1LX17if"
+                          }
+                        >
+                          <div>
+                            <span className="cl-font-semibold ">
+                              {i.display}
+                            </span>
+                          </div>
+                          <div>
+                            <svg
+                              width="1.25em"
+                              height="1.25em"
+                              viewBox="0 0 20 20"
+                              stroke="#335BF1"
+                              fill="none"
+                            >
+                              <path
+                                d="M3.333 10h13.332M11.666 5l5 5-5 5"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                            </svg>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {c.Component && (
+                  <div style={{ padding: "24px 32px" }}>
+                    <c.Component />
+                  </div>
+                )}
+              </div>
+            ))}
+          </>,
+          document.querySelector("div.cl-content") || document.body
+        )}
     </>
   ) : (
     <div />
@@ -165,12 +187,13 @@ const UserProfileTab = ({
 };
 
 const ApplicationsTab = () => {
-  const { getToken, id } = useSession();
+  const { getToken } = useSession();
+  const [editing, setEditing] = useState<ClerkItem>();
   const [items, setItems] = useState<Application[]>([]);
   useEffect(() => {
     getToken()
       .then((token) =>
-        fetch(`${process.env.API_URL}/applications?_clerk_session_id=${id}`, {
+        fetch(`${process.env.API_URL}/applications`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -178,44 +201,127 @@ const ApplicationsTab = () => {
       )
       .then((r) => (r.ok ? r.json() : { applications: [] }) as GetResponse)
       .then((r) => setItems(r.applications));
-  }, [getToken, id, setItems]);
+  }, [getToken, setItems]);
   return (
-    <UserProfileTab
-      id={"applications"}
-      icon={
-        <svg
-          width="1.25em"
-          height="1.25em"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          fill="none"
-          className="cl-icon"
-        >
-          <g id="application">
-            <g>
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M3.5,9h9C12.78,9,13,8.78,13,8.5C13,8.22,12.78,8,12.5,8h-9C3.22,8,3,8.22,3,8.5
+    <>
+      <UserProfileTab
+        id={"applications"}
+        icon={
+          <svg
+            width="1.25em"
+            height="1.25em"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            fill="none"
+            className="cl-icon"
+          >
+            <g id="application">
+              <g>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M3.5,9h9C12.78,9,13,8.78,13,8.5C13,8.22,12.78,8,12.5,8h-9C3.22,8,3,8.22,3,8.5
 			C3,8.78,3.22,9,3.5,9z M3.5,11h5C8.78,11,9,10.78,9,10.5C9,10.22,8.78,10,8.5,10h-5C3.22,10,3,10.22,3,10.5
 			C3,10.78,3.22,11,3.5,11z M19,1H1C0.45,1,0,1.45,0,2v16c0,0.55,0.45,1,1,1h18c0.55,0,1-0.45,1-1V2C20,1.45,19.55,1,19,1z M18,17H2
 			V6h16V17z M3.5,13h7c0.28,0,0.5-0.22,0.5-0.5c0-0.28-0.22-0.5-0.5-0.5h-7C3.22,12,3,12.22,3,12.5C3,12.78,3.22,13,3.5,13z"
-              />
+                />
+              </g>
             </g>
-          </g>
-        </svg>
-      }
-      cards={[
-        {
-          title: "Create",
-          description: "Add a new application",
-          Component: () => (
-            <NewApplication onSuccess={(item) => setItems([...items, item])} />
-          ),
-          items: items.map(({ name }) => ({ title: "Name", display: name })),
-        },
-      ]}
-    />
+          </svg>
+        }
+        cards={[
+          {
+            title: "Create",
+            description: "Add a new application",
+            Component: () => (
+              <NewApplication
+                onSuccess={(item) => setItems([...items, item])}
+              />
+            ),
+            items: items.map(({ name, uuid }) => ({
+              title: "Name",
+              display: name,
+              id: uuid,
+            })),
+            onItemClick: (e, i) => {
+              if (e.shiftKey) {
+                getToken()
+                  .then((token) =>
+                    fetch(`${process.env.API_URL}/applications?uuid=${i.id}`, {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                      method: "DELETE",
+                    })
+                  )
+                  .then(
+                    (r) =>
+                      (r.ok ? r.json() : { success: false }) as DeleteResponse
+                  )
+                  .then(
+                    (r) =>
+                      r.success &&
+                      setItems(items.filter((item) => item.uuid !== i.id))
+                  );
+              } else {
+                setEditing(i);
+              }
+            },
+          },
+        ]}
+      />
+      <Dialog open={!!editing} onClose={() => setEditing(undefined)}>
+        <DialogTitle>Edit Application Name</DialogTitle>
+        <DialogContent>
+          <StringField
+            value={editing?.display || ""}
+            setValue={(v) => editing && setEditing({ ...editing, display: v })}
+            required
+            fullWidth
+            name={"Name"}
+            label={"Name"}
+            variant={"filled"}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              getToken()
+                .then((token) =>
+                  fetch(`${process.env.API_URL}/applications`, {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                    },
+                    method: "PUT",
+                    body: JSON.stringify({
+                      name: editing?.display,
+                      uuid: editing?.id,
+                    }),
+                  })
+                )
+                .then(
+                  (r) => (r.ok ? r.json() : { success: false }) as PutResponse
+                )
+                .then((r) => {
+                  if (r.success)
+                    setItems(
+                      items.map((item) =>
+                        item.uuid === editing?.id
+                          ? { uuid: editing.id, name: editing.display }
+                          : item
+                      )
+                    );
+                  setEditing(undefined);
+                });
+            }}
+            color="primary"
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
