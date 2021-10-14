@@ -12,13 +12,15 @@ export default new EntitySchema<Application>({
     uuid: {
       type: "uuid",
       primary: true,
-      generated: 'uuid',
+      generated: "uuid",
     },
     name: {
       type: "varchar",
+      nullable: false,
     },
     user_id: {
       type: "varchar",
+      nullable: false,
     },
   },
 });

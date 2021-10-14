@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "../src/Layout";
-import RedirectToLogin from "../src/RedirectToLogin";
+import RedirectToLogin from "@dvargas92495/ui/dist/components/RedirectToLogin";
 import type { Handler as GetHandler } from "../functions/applications_get";
 import type { Handler as PostHandler } from "../functions/applications_post";
 import type { Handler as DeleteHandler } from "../functions/applications_delete";
 import type { Handler as PutHandler } from "../functions/applications_put";
 import { SignedIn, UserProfile } from "@clerk/clerk-react";
-import ReactDOM from "react-dom";
 import StringField from "@dvargas92495/ui/dist/components/StringField";
 import Button from "@dvargas92495/ui/dist/components/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -14,6 +13,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import useAuthenticatedHandler from "@dvargas92495/ui/dist/useAuthenticatedHandler";
+import UserProfileTab from "@dvargas92495/ui/dist/components/UserProfileTab";
 
 type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
   ? R
@@ -52,127 +52,8 @@ const NewApplication = ({
   );
 };
 
-type ClerkItem = { title: string; display: string; id: string };
-
-const UserProfileTab = ({
-  id,
-  subtitle = `Manage ${id}`,
-  cards = [],
-  icon,
-}: {
-  id: string;
-  subtitle?: string;
-  icon?: React.ReactNode;
-  cards?: {
-    title: string;
-    description: string;
-    items?: ClerkItem[];
-    Component?: React.FC;
-    onItemClick?: (e: React.MouseEvent, item: ClerkItem) => void;
-  }[];
-}) => {
-  const [mounted, setMounted] = useState(false);
-  const [active, setActive] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-    window.addEventListener("hashchange", (e) => {
-      setActive(e.newURL.endsWith(`#/${id}`));
-    });
-    setActive(window.location.hash === `#/${id}`);
-  }, [setMounted, id, setActive]);
-  const title = `${id.slice(0, 1).toUpperCase()}${id.slice(1)}`;
-  return mounted ? (
-    <>
-      {ReactDOM.createPortal(
-        <a
-          className={`cl-navbar-link${active ? " cl-active" : ""}`}
-          href={`${window.location.origin}/user#/${id}`}
-        >
-          {icon}
-          {title}
-        </a>,
-        document.querySelector("nav.cl-navbar") || document.body
-      )}
-      {active &&
-        ReactDOM.createPortal(
-          <>
-            <div className="cl-page-heading">
-              <div className="cl-text-container">
-                <h2 className="cl-title">{title}</h2>
-                <p className="cl-subtitle">{subtitle}</p>
-              </div>
-            </div>
-            {cards.map((c) => (
-              <div
-                className={
-                  "wKjtxHPVelSpGxgKD4J-K _1OzNYgdyNED3jLWN6DXv1T cl-themed-card"
-                }
-                key={c.title}
-              >
-                <div>
-                  <h1>{c.title}</h1>
-                  <p>{c.description}</p>
-                </div>
-                {c.items && (
-                  <div className="cl-titled-card-list">
-                    {c.items.map((i) => (
-                      <button
-                        className="cl-list-item _1qJoyBQenGMr7kHEjL4Krl _2YW23wFdhOB4SEGzozPtqO qlMNWy3GFjlnVDhYmD_84"
-                        key={i.id}
-                        onClick={(e) => c.onItemClick?.(e, i)}
-                      >
-                        <div className={"_3cdHQF85GQrVzNyaksJFAn"}>
-                          {i.title}
-                        </div>
-                        <div
-                          className={
-                            "_377YaX0RVdJAflWkqyk0_W _5doIP53SFIp-tF1LX17if"
-                          }
-                        >
-                          <div>
-                            <span className="cl-font-semibold ">
-                              {i.display}
-                            </span>
-                          </div>
-                          <div>
-                            <svg
-                              width="1.25em"
-                              height="1.25em"
-                              viewBox="0 0 20 20"
-                              stroke="#335BF1"
-                              fill="none"
-                            >
-                              <path
-                                d="M3.333 10h13.332M11.666 5l5 5-5 5"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              ></path>
-                            </svg>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {c.Component && (
-                  <div style={{ padding: "24px 32px" }}>
-                    <c.Component />
-                  </div>
-                )}
-              </div>
-            ))}
-          </>,
-          document.querySelector("div.cl-content") || document.body
-        )}
-    </>
-  ) : (
-    <div />
-  );
-};
-
 const ApplicationsTab = () => {
-  const [editing, setEditing] = useState<ClerkItem>();
+  const [editing, setEditing] = useState<Application>();
   const [items, setItems] = useState<Application[]>([]);
   const getApplications = useAuthenticatedHandler<GetHandler>({
     path: "applications",
@@ -237,8 +118,10 @@ const ApplicationsTab = () => {
                     r.success &&
                     setItems(items.filter((item) => item.uuid !== i.id))
                 );
+              } else if (e.ctrlKey) {
+                setEditing({ name: i.display, uuid: i.id });
               } else {
-                setEditing(i);
+                window.location.assign(`/dashboard#/${i.id}`);
               }
             },
           },
@@ -248,8 +131,8 @@ const ApplicationsTab = () => {
         <DialogTitle>Edit Application Name</DialogTitle>
         <DialogContent>
           <StringField
-            value={editing?.display || ""}
-            setValue={(v) => editing && setEditing({ ...editing, display: v })}
+            value={editing?.name || ""}
+            setValue={(v) => editing && setEditing({ ...editing, name: v })}
             required
             fullWidth
             name={"Name"}
@@ -261,16 +144,11 @@ const ApplicationsTab = () => {
           <Button
             onClick={() => {
               if (!editing) return;
-              putApplications({
-                name: editing.display,
-                uuid: editing.id,
-              }).then((r) => {
+              putApplications(editing).then((r) => {
                 if (r.success)
                   setItems(
                     items.map((item) =>
-                      item.uuid === editing?.id
-                        ? { uuid: editing.id, name: editing.display }
-                        : item
+                      item.uuid === editing?.uuid ? editing : item
                     )
                   );
                 setEditing(undefined);
