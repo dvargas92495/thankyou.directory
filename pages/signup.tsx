@@ -1,5 +1,5 @@
 import React from "react";
-import Layout, { LayoutHead } from "../src/Layout";
+import Layout, { LayoutHead } from "./_common/Layout";
 import { SignUp } from "@clerk/clerk-react";
 
 const Signup: React.FunctionComponent = () => (

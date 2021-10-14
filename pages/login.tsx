@@ -1,6 +1,6 @@
 import React from "react";
 import { SignIn } from "@clerk/clerk-react";
-import Layout, { LayoutHead } from "../src/Layout";
+import Layout, { LayoutHead } from "./_common/Layout";
 
 const Login: React.FunctionComponent = () => (
   <Layout>

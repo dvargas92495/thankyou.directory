@@ -1,5 +1,5 @@
 import React from "react";
-import Layout, { LayoutHead } from "../src/Layout";
+import Layout, { LayoutHead } from "./_common/Layout";
 
 const Home: React.FunctionComponent = () => (
   <Layout>

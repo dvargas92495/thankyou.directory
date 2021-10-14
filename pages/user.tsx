@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout, { LayoutHead } from "../src/Layout";
+import Layout, { LayoutHead } from "./_common/Layout";
 import RedirectToLogin from "@dvargas92495/ui/dist/components/RedirectToLogin";
 import type { Handler as GetHandler } from "../functions/applications_get";
 import type { Handler as PostHandler } from "../functions/applications_post";
