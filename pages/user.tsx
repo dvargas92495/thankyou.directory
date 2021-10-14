@@ -1,56 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "../src/Layout";
 import RedirectToLogin from "../src/RedirectToLogin";
-import type { Handler } from "../functions/applications_get";
+import type { Handler as GetHandler } from "../functions/applications_get";
 import type { Handler as PostHandler } from "../functions/applications_post";
 import type { Handler as DeleteHandler } from "../functions/applications_delete";
 import type { Handler as PutHandler } from "../functions/applications_put";
-import { SignedIn, UserProfile, useSession } from "@clerk/clerk-react";
+import { SignedIn, UserProfile } from "@clerk/clerk-react";
 import ReactDOM from "react-dom";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  StringField,
-} from "@dvargas92495/ui";
+import StringField from "@dvargas92495/ui/dist/components/StringField";
+import Button from "@dvargas92495/ui/dist/components/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import useAuthenticatedHandler from "@dvargas92495/ui/dist/useAuthenticatedHandler";
 
 type InnerPromise<T extends Promise<unknown>> = T extends Promise<infer R>
   ? R
   : unknown;
 
-type GetResponse = ReturnType<Handler>;
-type Applications = InnerPromise<GetResponse>["applications"];
-type Application = Omit<Applications[number], "user_id">;
-
-type PostResponse = ReturnType<PostHandler>;
-
-type DeleteResponse = ReturnType<DeleteHandler>;
-
-type PutResponse = ReturnType<PutHandler>;
+type Application = Omit<
+  InnerPromise<ReturnType<GetHandler>>["applications"][number],
+  "user_id"
+>;
 
 const NewApplication = ({
   onSuccess,
 }: {
   onSuccess: (item: Application) => void;
 }) => {
-  const { getToken } = useSession();
+  const postApplications = useAuthenticatedHandler<PostHandler>({
+    path: "applications",
+    method: "POST",
+  });
   const [name, setName] = useState("");
   const onClick = () => {
-    getToken()
-      .then((token) =>
-        fetch(`${process.env.API_URL}/applications`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({ name }),
-        })
-      )
-      .then((r) => (r.ok ? r.json() : { uuid: "" }) as PostResponse)
-      .then((r) => onSuccess({ name, uuid: r.uuid }));
+    postApplications({ name }).then((r) => onSuccess({ name, uuid: r.uuid }));
   };
   return (
     <>
@@ -187,21 +172,23 @@ const UserProfileTab = ({
 };
 
 const ApplicationsTab = () => {
-  const { getToken } = useSession();
   const [editing, setEditing] = useState<ClerkItem>();
   const [items, setItems] = useState<Application[]>([]);
+  const getApplications = useAuthenticatedHandler<GetHandler>({
+    path: "applications",
+    method: "GET",
+  });
+  const putApplications = useAuthenticatedHandler<PutHandler>({
+    path: "applications",
+    method: "PUT",
+  });
+  const deleteApplications = useAuthenticatedHandler<DeleteHandler>({
+    path: "applications",
+    method: "DELETE",
+  });
   useEffect(() => {
-    getToken()
-      .then((token) =>
-        fetch(`${process.env.API_URL}/applications`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      )
-      .then((r) => (r.ok ? r.json() : { applications: [] }) as GetResponse)
-      .then((r) => setItems(r.applications));
-  }, [getToken, setItems]);
+    getApplications(undefined).then((r) => setItems(r.applications));
+  }, [getApplications, setItems]);
   return (
     <>
       <UserProfileTab
@@ -245,24 +232,11 @@ const ApplicationsTab = () => {
             })),
             onItemClick: (e, i) => {
               if (e.shiftKey) {
-                getToken()
-                  .then((token) =>
-                    fetch(`${process.env.API_URL}/applications?uuid=${i.id}`, {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                      method: "DELETE",
-                    })
-                  )
-                  .then(
-                    (r) =>
-                      (r.ok ? r.json() : { success: false }) as DeleteResponse
-                  )
-                  .then(
-                    (r) =>
-                      r.success &&
-                      setItems(items.filter((item) => item.uuid !== i.id))
-                  );
+                deleteApplications({ uuid: i.id }).then(
+                  (r) =>
+                    r.success &&
+                    setItems(items.filter((item) => item.uuid !== i.id))
+                );
               } else {
                 setEditing(i);
               }
@@ -286,34 +260,21 @@ const ApplicationsTab = () => {
         <DialogActions>
           <Button
             onClick={() => {
-              getToken()
-                .then((token) =>
-                  fetch(`${process.env.API_URL}/applications`, {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                      "Content-Type": "application/json",
-                    },
-                    method: "PUT",
-                    body: JSON.stringify({
-                      name: editing?.display,
-                      uuid: editing?.id,
-                    }),
-                  })
-                )
-                .then(
-                  (r) => (r.ok ? r.json() : { success: false }) as PutResponse
-                )
-                .then((r) => {
-                  if (r.success)
-                    setItems(
-                      items.map((item) =>
-                        item.uuid === editing?.id
-                          ? { uuid: editing.id, name: editing.display }
-                          : item
-                      )
-                    );
-                  setEditing(undefined);
-                });
+              if (!editing) return;
+              putApplications({
+                name: editing.display,
+                uuid: editing.id,
+              }).then((r) => {
+                if (r.success)
+                  setItems(
+                    items.map((item) =>
+                      item.uuid === editing?.id
+                        ? { uuid: editing.id, name: editing.display }
+                        : item
+                    )
+                  );
+                setEditing(undefined);
+              });
             }}
             color="primary"
           >
