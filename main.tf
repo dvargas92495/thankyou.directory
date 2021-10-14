@@ -75,7 +75,8 @@ module "aws-serverless-backend" {
       "applications/get",
       "applications/post",
       "applications/put",
-      "sponsors/get"
+      "sponsors/get",
+      "sponsors/post"
     ]
 
     tags = {
