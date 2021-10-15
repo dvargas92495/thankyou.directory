@@ -1,13 +1,15 @@
 import { EntitySchema } from "typeorm";
 import Application from "./application";
 
-export default new EntitySchema<{
+export type SponsorSchema = {
   uuid: string;
   name: string;
   url: string;
   image: string;
   application: string;
-}>({
+};
+
+export default new EntitySchema<SponsorSchema>({
   name: "sponsors",
   columns: {
     uuid: {
