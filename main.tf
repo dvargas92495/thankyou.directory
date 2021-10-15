@@ -38,12 +38,6 @@ variable "clerk_api_key" {
     type = string
 }
 
-locals {
-  paths = [
-    for path in fileset("${path.module}/functions", "**"): replace(path, "/\\.ts$/", "")
-  ]
-}
-
 provider "aws" {
   region = "us-east-1"
   access_key = var.aws_access_token
@@ -72,15 +66,9 @@ module "aws_static_site" {
 
 module "aws-serverless-backend" {
     source  = "dvargas92495/serverless-backend/aws"
-    version = "1.5.15"
+    version = "2.0.0"
 
     api_name = "thankyou-directory"
-    domain = "thankyou.directory"
-    paths = local.paths
-
-    tags = {
-        Application = "thankyou-directory"
-    }
 }
 
 module "aws_clerk" {
