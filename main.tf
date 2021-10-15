@@ -39,7 +39,7 @@ variable "clerk_api_key" {
 }
 
 locals {
-  paths = fileset("${path.module}/functions", "[^_]**.ts")
+  paths = fileset("${path.module}/functions", "**.ts")
 }
 
 data "aws_iam_role" "roamjs_lambda_role" {
@@ -51,7 +51,7 @@ data "archive_file" "dummy" {
   output_path = "./dummy.zip"
 
   source {
-    content   = "${join(" | ", local.paths)}"
+    content   = "${join(" | ", tolist(local.paths))}"
     filename  = "dummy.js"
   }
 }
