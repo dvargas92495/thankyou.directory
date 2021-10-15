@@ -2,24 +2,29 @@ import createAPIGatewayProxyHandler from "aws-sdk-plus/dist/createAPIGatewayProx
 import clerkAuthenticateLambda from "@dvargas92495/api/dist/clerkAuthenticateLambda";
 import connectTypeorm from "@dvargas92495/api/dist/connectTypeorm";
 import { getRepository } from "typeorm";
-import Application from "../db/application";
+import Application from "../../db/application";
+
+class UserError extends Error {
+  constructor(arg: string) {
+    super(arg);
+  }
+  readonly code = 400;
+}
 
 const logic = ({
   name,
-  uuid,
   user: { id },
 }: {
   name: string;
-  uuid: string;
   user: { id: string };
-}) =>
-  connectTypeorm([Application])
-    .then(() =>
-      getRepository(Application).update({ uuid, user_id: id }, { name })
-    )
+}) => {
+  if (!name) throw new UserError("`name` is required");
+  return connectTypeorm([Application])
+    .then(() => getRepository(Application).insert({ name, user_id: id }))
     .then((result) => ({
-      success: !!result.affected,
+      uuid: result.identifiers[0].uuid as string,
     }));
+};
 
 export const handler = clerkAuthenticateLambda(
   createAPIGatewayProxyHandler(logic)

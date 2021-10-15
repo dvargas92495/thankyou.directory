@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Layout, { LayoutHead } from "./_common/Layout";
 import RedirectToLogin from "@dvargas92495/ui/dist/components/RedirectToLogin";
-import type { Handler as GetHandler } from "../functions/applications_get";
-import type { Handler as PostHandler } from "../functions/applications_post";
-import type { Handler as DeleteHandler } from "../functions/applications_delete";
-import type { Handler as PutHandler } from "../functions/applications_put";
+import type { Handler as GetHandler } from "../functions/applications/get";
+import type { Handler as PostHandler } from "../functions/applications/post";
+import type { Handler as DeleteHandler } from "../functions/applications/delete";
+import type { Handler as PutHandler } from "../functions/applications/put";
 import { SignedIn, UserProfile } from "@clerk/clerk-react";
 import StringField from "@dvargas92495/ui/dist/components/StringField";
 import Button from "@dvargas92495/ui/dist/components/Button";
@@ -68,7 +68,7 @@ const ApplicationsTab = () => {
     method: "DELETE",
   });
   useEffect(() => {
-    getApplications(undefined).then((r) => setItems(r.applications));
+    getApplications().then((r) => setItems(r.applications));
   }, [getApplications, setItems]);
   return (
     <>
