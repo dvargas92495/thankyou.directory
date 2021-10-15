@@ -76,14 +76,7 @@ module "aws-serverless-backend" {
 
     api_name = "thankyou-directory"
     domain = "thankyou.directory"
-    paths = [
-      "applications/delete",
-      "applications/get",
-      "applications/post",
-      "applications/put",
-      "sponsors/get",
-      "sponsors/post"
-    ]
+    paths = local.paths
 
     tags = {
         Application = "thankyou-directory"
@@ -132,8 +125,4 @@ resource "github_actions_secret" "clerk_api_key" {
   repository       = "thankyou.directory"
   secret_name      = "CLERK_API_KEY"
   plaintext_value  = var.clerk_api_key
-}
-
-output "filepaths" {
-  value       = local.paths
 }
