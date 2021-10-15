@@ -42,6 +42,10 @@ locals {
   paths = fileset("${path.module}/functions", "[^_]**.ts")
 }
 
+data "aws_iam_role" "roamjs_lambda_role" {
+  name = "roam-js-extensions-lambda-execution"
+}
+
 data "archive_file" "dummy" {
   type        = "zip"
   output_path = "./dummy.zip"
@@ -55,6 +59,7 @@ data "archive_file" "dummy" {
 resource "aws_lambda_function" "lambda_function" {
   function_name = "dummy_function"
   handler       = "dummy_function.handler"
+   role          = data.aws_iam_role.roamjs_lambda_role.arn
   filename      = data.archive_file.dummy.output_path
   runtime       = "nodejs12.x"
 }
