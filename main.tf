@@ -39,7 +39,9 @@ variable "clerk_api_key" {
 }
 
 locals {
-  paths = fileset("${path.module}/functions", "**.[jt]s")
+  paths = [
+    for path in fileset("${path.module}/functions", "**"): replace(path, "/\\.ts$/", "")
+  ]
 }
 
 provider "aws" {
