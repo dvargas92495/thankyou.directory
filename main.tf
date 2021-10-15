@@ -42,6 +42,23 @@ locals {
   paths = fileset("${path.module}/functions", "[^_]**.ts")
 }
 
+data "archive_file" "dummy" {
+  type        = "zip"
+  output_path = "./dummy.zip"
+
+  source {
+    content   = "${join(" | ", local.paths)}"
+    filename  = "dummy.js"
+  }
+}
+
+resource "aws_lambda_function" "lambda_function" {
+  function_name = "dummy_function"
+  handler       = "dummy_function.handler"
+  filename      = data.archive_file.dummy.output_path
+  runtime       = "nodejs12.x"
+}
+
 provider "aws" {
   region = "us-east-1"
   access_key = var.aws_access_token
