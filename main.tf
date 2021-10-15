@@ -66,7 +66,7 @@ module "aws_static_site" {
 
 module "aws-serverless-backend" {
     source  = "dvargas92495/serverless-backend/aws"
-    version = "2.0.2"
+    version = "2.0.3"
 
     api_name = "thankyou-directory"
 }
@@ -113,4 +113,8 @@ resource "github_actions_secret" "clerk_api_key" {
   repository       = "thankyou.directory"
   secret_name      = "CLERK_API_KEY"
   plaintext_value  = var.clerk_api_key
+}
+
+output {
+  paths = module.aws-serverless-backend.paths
 }
