@@ -114,7 +114,3 @@ resource "github_actions_secret" "clerk_api_key" {
   secret_name      = "CLERK_API_KEY"
   plaintext_value  = var.clerk_api_key
 }
-
-output "paths" {
-  value = module.aws-serverless-backend.paths
-}
