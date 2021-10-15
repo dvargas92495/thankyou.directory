@@ -38,6 +38,10 @@ variable "clerk_api_key" {
     type = string
 }
 
+locals {
+  paths = fileset("${path.module}/functions", "[^_]**.ts")
+}
+
 provider "aws" {
   region = "us-east-1"
   access_key = var.aws_access_token
