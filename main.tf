@@ -39,7 +39,7 @@ variable "clerk_api_key" {
 }
 
 locals {
-  paths = fileset("${path.module}/functions", "**")
+  paths = fileset("${path.module}/functions", "**.[jt]s")
 }
 
 provider "aws" {
